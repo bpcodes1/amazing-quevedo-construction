@@ -3,10 +3,13 @@
 @tailwind utilities;
 
 @layer base {
-  html, body {
+  html {
+    font-family: 'Inter', sans-serif;
+    scroll-behavior: smooth;
+  }
+  body {
     font-family: 'Inter', sans-serif;
     overflow-x: hidden;
-    scroll-behavior: smooth;
   }
 }
 
