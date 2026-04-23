@@ -1,0 +1,38 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html, body {
+    font-family: 'Inter', sans-serif;
+    overflow-x: hidden;
+    scroll-behavior: smooth;
+  }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.animate-fade-up   { animation: fadeUp 0.6s ease forwards; }
+.animate-fade-in   { animation: fadeIn 0.7s ease forwards; }
+
+/* Staggered delays for hero left content */
+.hero-tag      { opacity: 0; animation: fadeUp 0.6s 0.05s ease forwards; }
+.hero-headline { opacity: 0; animation: fadeUp 0.6s 0.15s ease forwards; }
+.hero-body     { opacity: 0; animation: fadeUp 0.6s 0.28s ease forwards; }
+.hero-cta      { opacity: 0; animation: fadeUp 0.6s 0.40s ease forwards; }
+.hero-stats    { opacity: 0; animation: fadeUp 0.6s 0.52s ease forwards; }
+
+/* Image shapes */
+.img-arch      { opacity: 0; animation: fadeIn 0.7s 0.10s ease forwards; }
+.img-circle    { opacity: 0; animation: fadeUp 0.7s 0.30s ease forwards; }
+.img-rect      { opacity: 0; animation: fadeUp 0.7s 0.45s ease forwards; }
+.img-badge     { opacity: 0; animation: fadeIn 0.5s 0.70s ease forwards; }
+
+
