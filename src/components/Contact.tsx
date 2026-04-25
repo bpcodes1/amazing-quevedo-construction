@@ -63,7 +63,33 @@ export default function Contact() {
             </div>
           </div>
 
-          <p className="text-[13px] text-[#555] font-semibold">Se habla español.</p>
+          <p className="text-[13px] text-[#555] font-semibold mb-6">Se habla español.</p>
+
+          <div>
+            <p className="text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-3">Follow Us</p>
+            <div className="flex items-center gap-3">
+              {/* Facebook */}
+              <a href="https://www.facebook.com/share/1CZeqZXM24/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer" title="Facebook" className="w-10 h-10 bg-[#1e1e1e] rounded-full flex items-center justify-center hover:bg-[#2a2a2a] transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z" />
+                </svg>
+              </a>
+              {/* Instagram */}
+              <a href="https://www.instagram.com/amazingquevedo" target="_blank" rel="noopener noreferrer" title="Instagram" className="w-10 h-10 bg-[#1e1e1e] rounded-full flex items-center justify-center hover:bg-[#2a2a2a] transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5" />
+                  <circle cx="12" cy="12" r="4" />
+                  <circle cx="17.5" cy="6.5" r="1" fill="currentColor" stroke="none" />
+                </svg>
+              </a>
+              {/* TikTok */}
+              <a href="https://www.tiktok.com/@amazingquevedollc" target="_blank" rel="noopener noreferrer" title="TikTok" className="w-10 h-10 bg-[#1e1e1e] rounded-full flex items-center justify-center hover:bg-[#2a2a2a] transition-colors">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.34 6.34 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V8.69a8.18 8.18 0 004.79 1.53V6.78a4.85 4.85 0 01-1.02-.09z" />
+                </svg>
+              </a>
+            </div>
+          </div>
         </div>
 
         {/* Right: form */}

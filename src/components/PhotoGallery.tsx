@@ -24,7 +24,7 @@ export default function PhotoGallery() {
     <section
       id="photo-gallery"
       ref={ref as React.RefObject<HTMLElement>}
-      className={`bg-[#f2f2f0] py-24 px-6 min-[1250px]:px-14 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
+      className={`bg-[#f2f2f0] pt-24 pb-12 px-6 min-[1250px]:px-14 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}
     >
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-14 max-w-xl">

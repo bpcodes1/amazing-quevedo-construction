@@ -28,7 +28,7 @@ const TESTIMONIALS = [
 export default function Testimonials() {
   const { ref, inView } = useInView()
   return (
-    <section id="testimonials" ref={ref as React.RefObject<HTMLElement>} className={`bg-[#f2f2f0] py-24 px-6 min-[1250px]:px-14 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
+    <section id="testimonials" ref={ref as React.RefObject<HTMLElement>} className={`bg-[#f2f2f0] pt-12 pb-24 px-6 min-[1250px]:px-14 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-[1200px] mx-auto">
         <div className="mb-16 max-w-xl">
           <div className="flex items-center gap-3 text-[11px] font-semibold tracking-[0.14em] uppercase text-[#888] mb-5">

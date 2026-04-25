@@ -51,7 +51,7 @@ export default function Hero() {
         </a>
 
         {/* MOBILE ONLY (<425px): circle + rect after CTA */}
-        <div className="min-[750px]:hidden flex gap-5 mt-8">
+        <div className="min-[750px]:hidden flex items-center justify-center gap-5 mt-8">
           <div
             className="img-circle relative overflow-hidden border-2 border-[#e0e0e0] bg-white"
             style={{ width: 130, height: 130, borderRadius: '50%', boxShadow: '0 4px 12px rgba(0,0,0,0.08)' }}
