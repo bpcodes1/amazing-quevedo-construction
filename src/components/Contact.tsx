@@ -1,8 +1,32 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useInView } from '../hooks/useInView'
+
+const SHEET_URL = 'https://script.google.com/macros/s/AKfycby_D-WuMB27iTKcThcxTZ0NIe9hbSrrZNE8eJYLKBjLnJdb-IXoszoijYSTDJe62R_DqQ/exec'
 
 export default function Contact() {
   const { ref, inView } = useInView()
+  const [form, setForm] = useState({ name: '', phone: '', email: '', service: '', city: '', message: '' })
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
+    setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
+  }
+
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus('sending')
+    try {
+      await fetch(SHEET_URL, {
+        method: 'POST',
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
+        body: JSON.stringify(form),
+      })
+    } catch {}
+    setStatus('sent')
+    setForm({ name: '', phone: '', email: '', service: '', city: '', message: '' })
+  }
+
   return (
     <section id="contact" ref={ref as React.RefObject<HTMLElement>} className={`bg-[#111] text-white py-24 px-6 min-[1250px]:px-14 transition-all duration-700 ${inView ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-8'}`}>
       <div className="max-w-[1200px] mx-auto min-[900px]:grid min-[900px]:grid-cols-2 min-[900px]:gap-16">
@@ -94,73 +118,112 @@ export default function Contact() {
 
         {/* Right: form */}
         <div className="bg-[#181818] rounded-2xl p-8">
-          <form className="flex flex-col gap-5">
-            <div className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-5">
+          {status === 'sent' ? (
+            <div className="flex flex-col items-center justify-center h-full gap-4 py-12 text-center">
+              <div className="w-14 h-14 rounded-full bg-[#1e1e1e] flex items-center justify-center">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </div>
+              <h3 className="text-white font-black uppercase text-[18px] tracking-tight">We got it!</h3>
+              <p className="text-[#666] text-[14px] leading-[1.7]">Thanks for reaching out. We'll call you back the same day.</p>
+              <button onClick={() => setStatus('idle')} className="mt-2 text-[12px] font-semibold tracking-[0.08em] uppercase text-[#555] hover:text-white transition-colors">
+                Submit another
+              </button>
+            </div>
+          ) : (
+            <form onSubmit={handleSubmit} action="#" className="flex flex-col gap-5">
+              <div className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-5">
+                <div>
+                  <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Name</label>
+                  <input
+                    type="text"
+                    name="name"
+                    value={form.name}
+                    onChange={handleChange}
+                    required
+                    placeholder="Your name"
+                    className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
+                  />
+                </div>
+                <div>
+                  <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Phone</label>
+                  <input
+                    type="tel"
+                    name="phone"
+                    value={form.phone}
+                    onChange={handleChange}
+                    required
+                    placeholder="(503) 000-0000"
+                    className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
+                  />
+                </div>
+              </div>
+
               <div>
-                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Name</label>
+                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Email</label>
+                <input
+                  type="email"
+                  name="email"
+                  value={form.email}
+                  onChange={handleChange}
+                  placeholder="your@email.com"
+                  className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
+                />
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Service Needed</label>
+                <select
+                  name="service"
+                  value={form.service}
+                  onChange={handleChange}
+                  className="w-full bg-[#222] text-white text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors appearance-none"
+                >
+                  <option value="">Select a service...</option>
+                  {['Roofing', 'Painting', 'Siding', 'Concrete', 'Gutters', 'Moss Removal', 'Cleanup', 'Not sure yet'].map((s) => (
+                    <option key={s} value={s.toLowerCase()}>{s}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div>
+                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">City</label>
                 <input
                   type="text"
-                  placeholder="Your name"
+                  name="city"
+                  value={form.city}
+                  onChange={handleChange}
+                  required
+                  placeholder="Your city"
                   className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
                 />
               </div>
+
               <div>
-                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Phone</label>
-                <input
-                  type="tel"
-                  placeholder="(503) 000-0000"
-                  className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
+                <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">
+                  Project Description <span className="text-[#333] normal-case tracking-normal">(optional)</span>
+                </label>
+                <textarea
+                  name="message"
+                  value={form.message}
+                  onChange={handleChange}
+                  rows={3}
+                  placeholder="Brief description of what you need..."
+                  className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors resize-none"
                 />
               </div>
-            </div>
 
-            <div>
-              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Email</label>
-              <input
-                type="email"
-                placeholder="your@email.com"
-                className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Service Needed</label>
-              <select className="w-full bg-[#222] text-white text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors appearance-none">
-                <option value="">Select a service...</option>
-                {['Roofing', 'Painting', 'Siding', 'Concrete', 'Gutters', 'Moss Removal', 'Cleanup', 'Not sure yet'].map((s) => (
-                  <option key={s} value={s.toLowerCase()}>{s}</option>
-                ))}
-              </select>
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">City</label>
-              <input
-                type="text"
-                placeholder="Your city"
-                className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
-              />
-            </div>
-
-            <div>
-              <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">
-                Project Description <span className="text-[#333] normal-case tracking-normal">(optional)</span>
-              </label>
-              <textarea
-                rows={3}
-                placeholder="Brief description of what you need..."
-                className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors resize-none"
-              />
-            </div>
-
-            <button
-              type="submit"
-              className="w-full bg-white text-[#111] text-[13px] font-black tracking-[0.06em] uppercase py-4 rounded-lg hover:bg-[#f0f0f0] transition-colors duration-200"
-            >
-              Get My Free Estimate
-            </button>
-            <p className="text-center text-[11px] text-[#444] italic">We respond the same day. Every time.</p>
-          </form>
+              <button
+                type="submit"
+                disabled={status === 'sending'}
+                className="w-full bg-white text-[#111] text-[13px] font-black tracking-[0.06em] uppercase py-4 rounded-lg hover:bg-[#f0f0f0] transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {status === 'sending' ? 'Sending...' : 'Get My Free Estimate'}
+              </button>
+              <p className="text-center text-[11px] text-[#444] italic">We respond the same day. Every time.</p>
+            </form>
+          )}
         </div>
 
       </div>
