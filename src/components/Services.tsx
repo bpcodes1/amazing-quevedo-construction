@@ -7,6 +7,7 @@ const SERVICES = [
     headline: 'When the Ceiling Starts Showing What the Roof Has Been Hiding',
     body: 'If your roof has been patched one too many times, or if the last storm finally pushed water through the ceiling, the repair window is already closing. We handle full replacements and targeted repairs — and for homeowners getting ready to list, we work with the timeline your realtor needs.',
     cta: 'Get a Free Roof Estimate',
+    includes: ['Moss Removal'],
   },
   {
     tag: 'Painting',
@@ -33,17 +34,11 @@ const SERVICES = [
     cta: 'Schedule Gutter Service',
   },
   {
-    tag: 'Moss Removal',
-    headline: 'The Moss Is Shortening the Life of a Roof You Paid a Lot For',
-    body: 'Years of Oregon rain turn roofs into moss gardens. That moss holds moisture against your shingles and takes years off the roof. We remove it safely — no pressure washing, no damage — and treat the roof to slow it coming back.',
-    cta: 'Get a Free Moss Removal Estimate',
+    tag: 'Junk Removal',
+    headline: 'One Crew, One Truck, One Day — Instead of a Dumpster and a Weekend',
+    body: "Post-project debris, years of accumulation, or a move that left more than you can haul yourself. We take it all out in one visit so you don't have to rent a truck, pay dump fees, or make three trips.",
+    cta: 'Schedule a Junk Removal',
   },
-  // {
-  //   tag: 'Cleanup',
-  //   headline: 'One Crew, One Truck, One Day — Instead of a Dumpster and a Weekend',
-  //   body: "Post-project debris, years of accumulation, or a move that left more than you can haul yourself. We take it all out in one visit so you don't have to rent a truck, pay dump fees, or make three trips.",
-  //   cta: 'Schedule a Cleanup',
-  // },
 ]
 
 export default function Services() {
@@ -63,12 +58,12 @@ export default function Services() {
             Everything Your Home Needs — Handled by One Crew
           </h2>
           <p className="text-[14px] text-[#555] leading-[1.75]">
-            One call. One licensed contractor. Seven services most Willamette Valley homeowners eventually need.
+            One call. One licensed contractor. Six services most Willamette Valley homeowners eventually need.
           </p>
         </div>
 
         <div className="grid grid-cols-1 min-[600px]:grid-cols-2 min-[1000px]:grid-cols-3 gap-5">
-          {SERVICES.map(({ tag, headline, body, cta }, i) => (
+          {SERVICES.map(({ tag, headline, body, cta, includes }, i) => (
             <div
               key={tag}
               className="bg-white border border-[#e0e0e0] flex flex-col p-7 hover:border-[#111] hover:shadow-sm transition-all duration-200"
@@ -88,6 +83,19 @@ export default function Services() {
                 {headline}
               </h3>
               <p className="text-[13px] text-[#555] leading-[1.75] mb-6 flex-1">{body}</p>
+
+              {includes && includes.length > 0 && (
+                <div className="flex flex-wrap gap-2 mb-5">
+                  {includes.map((item) => (
+                    <span
+                      key={item}
+                      className="text-[10px] font-bold tracking-[0.1em] uppercase text-[#555] border border-[#ddd] px-3 py-1 rounded-full"
+                    >
+                      + {item}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               <a
                 href="tel:9717018136"

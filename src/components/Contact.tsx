@@ -1,12 +1,61 @@
-import React, { useState } from 'react'
+import React, { useState, useRef } from 'react'
 import { useInView } from '../hooks/useInView'
 
 const SHEET_URL = 'https://script.google.com/macros/s/AKfycby_D-WuMB27iTKcThcxTZ0NIe9hbSrrZNE8eJYLKBjLnJdb-IXoszoijYSTDJe62R_DqQ/exec'
 
+const RATE_LIMIT_KEY = 'aqc_submissions'
+const MAX_PER_HOUR = 3
+const MIN_GAP_MS = 60_000
+
+// Strip HTML tags, trim, and prefix formula starters to prevent Google Sheets injection
+function sanitize(value: string): string {
+  return value
+    .trim()
+    .replace(/<[^>]*>/g, '')
+    .replace(/^([=+\-@|])/, "' $1")
+}
+
+function isValidEmail(email: string): boolean {
+  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)
+}
+
+function isValidPhone(phone: string): boolean {
+  return /^[\d\s\-()+.]{7,20}$/.test(phone)
+}
+
+function checkRateLimit(): string | null {
+  try {
+    const now = Date.now()
+    const stored = localStorage.getItem(RATE_LIMIT_KEY)
+    const timestamps: number[] = stored ? JSON.parse(stored) : []
+    const recent = timestamps.filter(t => now - t < 3_600_000)
+    if (recent.length > 0 && now - recent[recent.length - 1] < MIN_GAP_MS) {
+      return 'Please wait a minute before submitting again.'
+    }
+    if (recent.length >= MAX_PER_HOUR) {
+      return 'Too many submissions. Please try again in an hour or call us directly.'
+    }
+  } catch {}
+  return null
+}
+
+function recordSubmission() {
+  try {
+    const now = Date.now()
+    const stored = localStorage.getItem(RATE_LIMIT_KEY)
+    const timestamps: number[] = stored ? JSON.parse(stored) : []
+    const recent = timestamps.filter(t => now - t < 3_600_000)
+    recent.push(now)
+    localStorage.setItem(RATE_LIMIT_KEY, JSON.stringify(recent))
+  } catch {}
+}
+
 export default function Contact() {
   const { ref, inView } = useInView()
   const [form, setForm] = useState({ name: '', phone: '', email: '', service: '', city: '', message: '' })
-  const [status, setStatus] = useState<'idle' | 'sending' | 'sent'>('idle')
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [errorMsg, setErrorMsg] = useState('')
+  const honeypotRef = useRef<HTMLInputElement>(null)
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -14,15 +63,67 @@ export default function Contact() {
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault()
+
+    // Honeypot check — bots fill hidden fields, real users don't
+    if (honeypotRef.current?.value) return
+
+    // Rate limiting
+    const rateLimitError = checkRateLimit()
+    if (rateLimitError) {
+      setErrorMsg(rateLimitError)
+      setStatus('error')
+      return
+    }
+
+    // Validation
+    if (form.name.trim().length < 2) {
+      setErrorMsg('Please enter your full name.')
+      setStatus('error')
+      return
+    }
+    if (!isValidPhone(form.phone)) {
+      setErrorMsg('Please enter a valid phone number.')
+      setStatus('error')
+      return
+    }
+    if (form.email && !isValidEmail(form.email)) {
+      setErrorMsg('Please enter a valid email address.')
+      setStatus('error')
+      return
+    }
+    if (form.city.trim().length < 2) {
+      setErrorMsg('Please enter your city.')
+      setStatus('error')
+      return
+    }
+    if (form.message.length > 1000) {
+      setErrorMsg('Message is too long (max 1000 characters).')
+      setStatus('error')
+      return
+    }
+
     setStatus('sending')
+    setErrorMsg('')
+
+    const sanitized = {
+      name:    sanitize(form.name),
+      phone:   sanitize(form.phone),
+      email:   sanitize(form.email),
+      service: sanitize(form.service),
+      city:    sanitize(form.city),
+      message: sanitize(form.message),
+    }
+
     try {
       await fetch(SHEET_URL, {
         method: 'POST',
         mode: 'no-cors',
         headers: { 'Content-Type': 'text/plain' },
-        body: JSON.stringify(form),
+        body: JSON.stringify(sanitized),
       })
+      recordSubmission()
     } catch {}
+
     setStatus('sent')
     setForm({ name: '', phone: '', email: '', service: '', city: '', message: '' })
   }
@@ -132,7 +233,19 @@ export default function Contact() {
               </button>
             </div>
           ) : (
-            <form onSubmit={handleSubmit} action="#" className="flex flex-col gap-5">
+            <form onSubmit={handleSubmit} action="#" className="flex flex-col gap-5" noValidate>
+
+              {/* Honeypot — hidden from real users, bots fill it in */}
+              <input
+                ref={honeypotRef}
+                type="text"
+                name="website"
+                tabIndex={-1}
+                autoComplete="off"
+                aria-hidden="true"
+                style={{ position: 'absolute', left: '-9999px', width: '1px', height: '1px', opacity: 0, pointerEvents: 'none' }}
+              />
+
               <div className="grid grid-cols-1 min-[500px]:grid-cols-2 gap-5">
                 <div>
                   <label className="block text-[11px] font-semibold tracking-[0.1em] uppercase text-[#555] mb-2">Name</label>
@@ -142,6 +255,7 @@ export default function Contact() {
                     value={form.name}
                     onChange={handleChange}
                     required
+                    maxLength={100}
                     placeholder="Your name"
                     className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
                   />
@@ -154,6 +268,7 @@ export default function Contact() {
                     value={form.phone}
                     onChange={handleChange}
                     required
+                    maxLength={20}
                     placeholder="(503) 000-0000"
                     className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
                   />
@@ -167,6 +282,7 @@ export default function Contact() {
                   name="email"
                   value={form.email}
                   onChange={handleChange}
+                  maxLength={150}
                   placeholder="your@email.com"
                   className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
                 />
@@ -181,7 +297,7 @@ export default function Contact() {
                   className="w-full bg-[#222] text-white text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors appearance-none"
                 >
                   <option value="">Select a service...</option>
-                  {['Roofing', 'Painting', 'Siding', 'Concrete', 'Gutters', 'Moss Removal', 'Cleanup', 'Not sure yet'].map((s) => (
+                  {['Roofing', 'Painting', 'Siding', 'Concrete', 'Gutters', 'Junk Removal', 'Not sure yet'].map((s) => (
                     <option key={s} value={s.toLowerCase()}>{s}</option>
                   ))}
                 </select>
@@ -195,6 +311,7 @@ export default function Contact() {
                   value={form.city}
                   onChange={handleChange}
                   required
+                  maxLength={100}
                   placeholder="Your city"
                   className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors"
                 />
@@ -209,10 +326,15 @@ export default function Contact() {
                   value={form.message}
                   onChange={handleChange}
                   rows={3}
+                  maxLength={1000}
                   placeholder="Brief description of what you need..."
                   className="w-full bg-[#222] text-white placeholder-[#444] text-[14px] px-4 py-3 rounded-lg border border-[#2e2e2e] focus:outline-none focus:border-[#444] transition-colors resize-none"
                 />
               </div>
+
+              {status === 'error' && (
+                <p className="text-[13px] text-red-400 font-semibold">{errorMsg}</p>
+              )}
 
               <button
                 type="submit"

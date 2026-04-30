@@ -3,25 +3,25 @@ import { useInView } from '../hooks/useInView'
 
 const TESTIMONIALS = [
   {
-    quote: "Real review coming soon. We're collecting testimonials from past clients — ask us about our recent roofing work in the Willamette Valley.",
-    name: '[Name L.]',
-    city: 'Salem',
-    year: '2024',
-    service: 'Roofing',
-  },
-  {
-    quote: "Real review coming soon. If you've worked with us on an exterior painting or siding project, we'd love to share your experience.",
-    name: '[Name L.]',
-    city: 'Woodburn',
-    year: '2024',
+    quote: "We could not have been more satisfied with the job of painting the exterior of our home in Canby. They were extremely professional in workmanship and courtesy. Although they were not the lowest of the bids received, it was promptly submitted, complete and very well defined both verbally and in written form. Will definitely call them for our next project.",
+    name: 'Jerry C.',
+    city: 'Canby',
+    year: '2020',
     service: 'Painting',
   },
   {
-    quote: 'Testimonio real próximamente. Real review coming soon — including Spanish-language testimonials from clients who prefer working in Spanish.',
-    name: '[Nombre L.]',
-    city: 'Portland',
-    year: '2025',
-    service: 'Siding',
+    quote: "This company did an outstanding job from start to finish. They were prompt, professional, hard workers, friendly, reasonably priced, and I will recommend them to anyone that needs their house painted.",
+    name: 'Kevin F.',
+    city: 'Willamette Valley',
+    year: '2019',
+    service: 'Painting',
+  },
+  {
+    quote: "Luis and his team did a phenomenal job! They were prompt, professional and did an exceptional job and were very detail oriented with the paint of our home. I've since shared their work with two co-workers who plan to hire them as well. I would, without hesitation, hire them again! They provided a very affordable quote for the work they've done.",
+    name: 'Laura S.',
+    city: 'Willamette Valley',
+    year: '2019',
+    service: 'Painting',
   },
 ]
 
