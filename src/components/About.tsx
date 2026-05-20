@@ -10,7 +10,7 @@ export default function About() {
         {/* Arch photo placeholder */}
         <div className="flex justify-center mb-14 min-[900px]:mb-0">
           <div
-            className="overflow-hidden border-2 border-[#e0e0e0] bg-[#f2f2f0] relative flex flex-col items-center justify-center"
+            className="overflow-hidden border-2 border-[#e0e0e0] relative"
             style={{
               width: 300,
               height: 380,
@@ -18,10 +18,11 @@ export default function About() {
               boxShadow: '0 8px 40px rgba(0,0,0,0.08)',
             }}
           >
-            <div className="w-16 h-16 bg-[#e0e0e0] rounded-full mb-4" />
-            <p className="text-[11px] font-semibold text-[#bbb] uppercase tracking-[0.1em] text-center px-8 leading-[1.8]">
-              Photo of Mayra<br />Coming Soon
-            </p>
+            <img
+              src="/mayra.webp"
+              alt="Mayra, Owner & Operator"
+              className="w-full h-full object-cover object-top"
+            />
             <div className="absolute bottom-4 left-1/2 -translate-x-1/2 bg-[#111] text-white text-[9px] font-bold tracking-[0.1em] uppercase px-3 py-[4px] rounded-full whitespace-nowrap">
               Owner &amp; Operator
             </div>
